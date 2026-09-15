@@ -58,10 +58,17 @@ app.use((req, res, next) => {
   next();
 });
 
+function getIpVersion(ip) {
+  if (!ip) return null;
+  const normalized = ip.startsWith('::ffff:') ? ip.slice(7) : ip;
+  return normalized.includes(':') ? 'IPv6' : 'IPv4';
+}
+
 function getServerInfo(req) {
   return {
     timestamp: new Date().toISOString(),
     ip: req.ip,
+    ipVersion: getIpVersion(req.ip),
     userAgent: req.get('user-agent') || null,
     acceptLanguage: req.get('accept-language') || null,
     referer: req.get('referer') || null,

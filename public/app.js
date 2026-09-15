@@ -16,6 +16,15 @@ function formatTime(ms) {
   return new Date(ms).toLocaleString();
 }
 
+function isWebglSupported() {
+  try {
+    const canvas = document.createElement('canvas');
+    return Boolean(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
+  } catch (e) {
+    return false;
+  }
+}
+
 function collectBrowserInfo() {
   return {
     language: navigator.language || null,
@@ -26,6 +35,27 @@ function collectBrowserInfo() {
     platform: navigator.platform || null,
     colorDepth: window.screen.colorDepth || null,
     online: navigator.onLine,
+    hardwareConcurrency: navigator.hardwareConcurrency || null,
+    deviceMemory: navigator.deviceMemory || null,
+    maxTouchPoints: navigator.maxTouchPoints || 0,
+    cookiesEnabled: navigator.cookieEnabled,
+    localStorageAvailable: (() => {
+      try {
+        return typeof window.localStorage !== 'undefined';
+      } catch (e) {
+        return false;
+      }
+    })(),
+    sessionStorageAvailable: (() => {
+      try {
+        return typeof window.sessionStorage !== 'undefined';
+      } catch (e) {
+        return false;
+      }
+    })(),
+    indexedDbAvailable: typeof window.indexedDB !== 'undefined',
+    webglSupported: isWebglSupported(),
+    serviceWorkerSupported: 'serviceWorker' in navigator,
   };
 }
 
@@ -163,6 +193,10 @@ async function handleCompare() {
       ['Screen', (r) => (r.client && r.client.screen) || '—'],
       ['Viewport', (r) => (r.client && r.client.viewport) || '—'],
       ['Platform', (r) => (r.client && r.client.platform) || '—'],
+      ['IP version', (r) => (r.server && r.server.ipVersion) || '—'],
+      ['CPU cores', (r) => (r.client && r.client.hardwareConcurrency) || '—'],
+      ['Device memory (GB)', (r) => (r.client && r.client.deviceMemory) || '—'],
+      ['Max touch points', (r) => (r.client && r.client.maxTouchPoints) ?? '—'],
     ];
 
     const header = `<tr><th>Field</th>${records.map((_, i) => `<th>Test ${i + 1}</th>`).join('')}</tr>`;
