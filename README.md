@@ -39,6 +39,7 @@ multi-profiles/
 | POST   | `/api/test`            | Records a test (`{ client: {...} }` body) and returns it          |
 | GET    | `/api/history?limit=`  | Recent test records, newest first (default/limit 50, max 200)    |
 | GET    | `/api/history/:testId` | Single test record                                                |
+| GET    | `/api/history/export?format=json\|csv&ids=a,b` | Downloads history (all, or selected IDs) as a JSON or CSV file |
 | GET    | `/api/compare?ids=a,b` | Test records for the given comma-separated IDs, in order          |
 | POST   | `/api/login`           | `{ username, password }` — dummy local credentials only           |
 | POST   | `/api/logout`          | Clears the logged-in user from the session                        |

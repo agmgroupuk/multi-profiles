@@ -120,6 +120,81 @@ app.get('/api/history', (req, res) => {
   res.json(history.slice(0, limit));
 });
 
+function flattenRecord(r) {
+  return {
+    testId: r.testId,
+    sessionId: r.sessionId,
+    timestamp: r.timestamp,
+    ip: r.server.ip,
+    ipVersion: r.server.ipVersion,
+    userAgent: r.server.userAgent,
+    acceptLanguage: r.server.acceptLanguage,
+    referer: r.server.referer,
+    language: r.client.language,
+    timezone: r.client.timezone,
+    screen: r.client.screen,
+    viewport: r.client.viewport,
+    devicePixelRatio: r.client.devicePixelRatio,
+    platform: r.client.platform,
+    colorDepth: r.client.colorDepth,
+    online: r.client.online,
+    hardwareConcurrency: r.client.hardwareConcurrency,
+    deviceMemory: r.client.deviceMemory,
+    maxTouchPoints: r.client.maxTouchPoints,
+    cookiesEnabled: r.client.cookiesEnabled,
+    localStorageAvailable: r.client.localStorageAvailable,
+    sessionStorageAvailable: r.client.sessionStorageAvailable,
+    indexedDbAvailable: r.client.indexedDbAvailable,
+    webglSupported: r.client.webglSupported,
+    serviceWorkerSupported: r.client.serviceWorkerSupported,
+  };
+}
+
+function toCsv(rows) {
+  if (!rows.length) return '';
+  const columns = Object.keys(rows[0]);
+  const escape = (value) => {
+    if (value === null || value === undefined) return '';
+    const str = String(value);
+    return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+  };
+  const lines = [columns.join(',')];
+  for (const row of rows) {
+    lines.push(columns.map((col) => escape(row[col])).join(','));
+  }
+  return lines.join('\n');
+}
+
+// GET /api/history/export?format=json|csv&ids=a,b,c — download test history as a file
+app.get('/api/history/export', (req, res) => {
+  const format = (req.query.format || 'json').toLowerCase();
+  const idsParam = req.query.ids;
+
+  let records = history;
+  if (idsParam) {
+    const ids = String(idsParam).split(',').map((id) => id.trim()).filter(Boolean);
+    const byId = new Map(history.map((r) => [r.testId, r]));
+    records = ids.map((id) => byId.get(id)).filter(Boolean);
+  }
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+
+  if (format === 'csv') {
+    const csv = toCsv(records.map(flattenRecord));
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename="multi-profiles-history-${stamp}.csv"`);
+    return res.send(csv);
+  }
+
+  if (format !== 'json') {
+    return res.status(400).json({ error: 'Unsupported format. Use "json" or "csv".' });
+  }
+
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Disposition', `attachment; filename="multi-profiles-history-${stamp}.json"`);
+  res.send(JSON.stringify(records, null, 2));
+});
+
 // GET /api/history/:testId — single record detail
 app.get('/api/history/:testId', (req, res) => {
   const record = history.find((r) => r.testId === req.params.testId);

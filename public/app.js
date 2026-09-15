@@ -210,6 +210,13 @@ async function handleCompare() {
   }
 }
 
+function handleExport(format) {
+  const ids = Array.from(document.querySelectorAll('.row-select:checked')).map((el) => el.value);
+  const params = new URLSearchParams({ format });
+  if (ids.length) params.set('ids', ids.join(','));
+  window.location.href = `/api/history/export?${params.toString()}`;
+}
+
 async function init() {
   await refreshSession();
   await refreshHistory();
@@ -218,6 +225,8 @@ async function init() {
   $('#login-form').addEventListener('submit', handleLogin);
   $('#logout-btn').addEventListener('click', handleLogout);
   $('#compare-btn').addEventListener('click', handleCompare);
+  $('#export-json-btn').addEventListener('click', () => handleExport('json'));
+  $('#export-csv-btn').addEventListener('click', () => handleExport('csv'));
 
   // Run an initial test automatically so the dashboard has data on first load.
   runTest();
