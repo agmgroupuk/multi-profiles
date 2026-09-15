@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Multi Profiles — Browser Profile Testing Lab</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1>Multi Profiles</h1>
+      <p class="subtitle">Browser Profile Testing Lab</p>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section class="card" id="session-card">
+      <h2>Session</h2>
+      <dl class="kv" id="session-kv">
+        <dt>Session ID</dt><dd data-field="sessionId">—</dd>
+        <dt>New session?</dt><dd data-field="isNew">—</dd>
+        <dt>Cookie present</dt><dd data-field="cookiePresent">—</dd>
+        <dt>Created at</dt><dd data-field="createdAt">—</dd>
+        <dt>Last activity</dt><dd data-field="lastActivity">—</dd>
+        <dt>Logged in as</dt><dd data-field="user">—</dd>
+      </dl>
+    </section>
+
+    <div class="grid-2">
+      <section class="card">
+        <h2>Server-observed information</h2>
+        <p class="hint">What the server sees from this HTTP request.</p>
+        <dl class="kv" id="server-kv">
+          <dt>Timestamp</dt><dd data-field="timestamp">—</dd>
+          <dt>IP address</dt><dd data-field="ip">—</dd>
+          <dt>User-Agent</dt><dd data-field="userAgent">—</dd>
+          <dt>Accept-Language</dt><dd data-field="acceptLanguage">—</dd>
+          <dt>Referer</dt><dd data-field="referer">—</dd>
+        </dl>
+      </section>
+
+      <section class="card">
+        <h2>Browser-observed information</h2>
+        <p class="hint">What normal browser APIs expose on this device.</p>
+        <dl class="kv" id="client-kv">
+          <dt>Language</dt><dd data-field="language">—</dd>
+          <dt>Timezone</dt><dd data-field="timezone">—</dd>
+          <dt>Screen</dt><dd data-field="screen">—</dd>
+          <dt>Viewport</dt><dd data-field="viewport">—</dd>
+          <dt>Device pixel ratio</dt><dd data-field="devicePixelRatio">—</dd>
+          <dt>Platform</dt><dd data-field="platform">—</dd>
+          <dt>Color depth</dt><dd data-field="colorDepth">—</dd>
+          <dt>Online</dt><dd data-field="online">—</dd>
+        </dl>
+      </section>
+    </div>
+
+    <section class="card actions">
+      <button id="run-test-btn" class="btn btn-primary">Run new test</button>
+      <span id="run-test-status" class="status"></span>
+    </section>
+
+    <div class="grid-2">
+      <section class="card" id="login-card">
+        <h2>Test login (dummy)</h2>
+        <p class="hint">Local test credentials only — not a real third-party login.</p>
+        <form id="login-form">
+          <label>Username <input type="text" id="login-username" autocomplete="off" placeholder="test" /></label>
+          <label>Password <input type="password" id="login-password" autocomplete="off" placeholder="test123" /></label>
+          <div class="actions-row">
+            <button type="submit" class="btn btn-primary">Log in</button>
+            <button type="button" id="logout-btn" class="btn">Log out</button>
+          </div>
+        </form>
+        <p id="login-status" class="status"></p>
+      </section>
+
+      <section class="card" id="compare-card">
+        <h2>Comparison</h2>
+        <p class="hint">Select rows in the history table below, then compare.</p>
+        <button id="compare-btn" class="btn">Compare selected</button>
+        <div id="compare-output" class="compare-output"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>Test history</h2>
+      <div class="table-wrap">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Test ID</th>
+              <th>Timestamp</th>
+              <th>Session ID</th>
+              <th>IP</th>
+              <th>Language</th>
+              <th>Timezone</th>
+              <th>Screen</th>
+            </tr>
+          </thead>
+          <tbody id="history-tbody">
+            <tr><td colspan="8" class="hint">No tests yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Controlled testing lab. Observed values only — no claims about cross-profile identity are made.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

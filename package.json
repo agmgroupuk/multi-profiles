@@ -1,0 +1,17 @@
+{
+  "name": "multi-profiles",
+  "version": "1.0.0",
+  "description": "Browser Profile Testing Lab - compare server-side and browser-side observable data across browser profiles/sessions",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.1"
+  }
+}
