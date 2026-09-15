@@ -98,15 +98,15 @@
     <section class="card">
       <h2>Test history</h2>
       <div class="actions-row">
-        <button id="export-json-btn" class="btn">Export JSON</button>
-        <button id="export-csv-btn" class="btn">Export CSV</button>
-        <span class="hint">Exports selected rows, or all history if none selected.</span>
+        <button id="export-json-btn" class="btn" disabled>Export JSON</button>
+        <button id="export-csv-btn" class="btn" disabled>Export CSV</button>
+        <span class="hint">Select rows below, then export. Export is disabled until at least one row is selected.</span>
       </div>
       <div class="table-wrap">
         <table id="history-table">
           <thead>
             <tr>
-              <th></th>
+              <th><input type="checkbox" id="select-all-checkbox" title="Select all" /></th>
               <th>Test ID</th>
               <th>Timestamp</th>
               <th>Session ID</th>

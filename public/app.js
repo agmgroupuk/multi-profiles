@@ -108,9 +108,17 @@ async function refreshHistory() {
   const tbody = $('#history-tbody');
   if (!records.length) {
     tbody.innerHTML = '<tr><td colspan="8" class="hint">No tests yet.</td></tr>';
-    return;
+  } else {
+    tbody.innerHTML = records.map(renderHistoryRow).join('');
   }
-  tbody.innerHTML = records.map(renderHistoryRow).join('');
+  $('#select-all-checkbox').checked = false;
+  updateExportButtonsState();
+}
+
+function updateExportButtonsState() {
+  const selectedCount = document.querySelectorAll('.row-select:checked').length;
+  $('#export-json-btn').disabled = selectedCount === 0;
+  $('#export-csv-btn').disabled = selectedCount === 0;
 }
 
 async function runTest() {
@@ -212,8 +220,8 @@ async function handleCompare() {
 
 function handleExport(format) {
   const ids = Array.from(document.querySelectorAll('.row-select:checked')).map((el) => el.value);
-  const params = new URLSearchParams({ format });
-  if (ids.length) params.set('ids', ids.join(','));
+  if (!ids.length) return;
+  const params = new URLSearchParams({ format, ids: ids.join(',') });
   window.location.href = `/api/history/export?${params.toString()}`;
 }
 
@@ -227,6 +235,17 @@ async function init() {
   $('#compare-btn').addEventListener('click', handleCompare);
   $('#export-json-btn').addEventListener('click', () => handleExport('json'));
   $('#export-csv-btn').addEventListener('click', () => handleExport('csv'));
+
+  $('#history-tbody').addEventListener('change', (e) => {
+    if (e.target.classList.contains('row-select')) updateExportButtonsState();
+  });
+
+  $('#select-all-checkbox').addEventListener('change', (e) => {
+    document.querySelectorAll('.row-select').forEach((cb) => {
+      cb.checked = e.target.checked;
+    });
+    updateExportButtonsState();
+  });
 
   // Run an initial test automatically so the dashboard has data on first load.
   runTest();
