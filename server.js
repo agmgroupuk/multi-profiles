@@ -11,8 +11,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
-// Required so req.ip / req.secure are correct behind Railway's HTTPS reverse proxy.
-app.set('trust proxy', 1);
+// Only trust X-Forwarded-For/Proto when TRUST_PROXY says so — otherwise any direct
+// client (curl, browser) could spoof its own IP by sending that header itself.
+// Set TRUST_PROXY=1 on Railway (exactly one reverse proxy hop in front of the app).
+function resolveTrustProxy() {
+  const raw = process.env.TRUST_PROXY;
+  if (raw === undefined || raw === '') return false;
+  if (raw === 'true') return true;
+  if (raw === 'false') return false;
+  const hops = Number(raw);
+  return Number.isFinite(hops) ? hops : raw; // also allow CIDR/subnet strings
+}
+app.set('trust proxy', resolveTrustProxy());
 
 app.use(express.json());
 

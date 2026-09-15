@@ -64,6 +64,7 @@ See [.env.example](.env.example):
 - `PORT` — port to listen on (Railway sets this automatically).
 - `SESSION_SECRET` — secret used to sign the session cookie. Set a strong random value in production.
 - `NODE_ENV` — set to `production` to enable secure (HTTPS-only) session cookies.
+- `TRUST_PROXY` — number of reverse-proxy hops in front of the app. Set to `1` on Railway so the real client IP (from `X-Forwarded-For`) is reported correctly. Leave unset locally/direct-access so a client can't spoof its own IP by sending that header itself.
 
 No real secrets are committed; `.env` is git-ignored.
 
@@ -71,7 +72,7 @@ No real secrets are committed; `.env` is git-ignored.
 
 1. Push this repository to GitHub.
 2. Create a new Railway project from the repo.
-3. Set the `SESSION_SECRET` variable (and optionally `NODE_ENV=production`).
+3. Set the `SESSION_SECRET` variable, `TRUST_PROXY=1` (so the reported IP is the real visitor, not Railway's edge), and optionally `NODE_ENV=production`.
 4. Railway auto-detects `npm start` and injects `PORT`; no other configuration is required.
 5. Access the generated public HTTPS URL from separate browser profiles to compare results.
 
