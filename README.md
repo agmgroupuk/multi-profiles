@@ -1,6 +1,6 @@
 # Multi Profiles — Browser Profile Testing Lab
 
-A controlled testing dashboard for comparing what a website can legitimately observe when accessed from different browser profiles (same device, independent profiles). This is **not** an anti-detect browser and does not fingerprint or evade any security system — it only reports standard, observable HTTP/browser-API data.
+A controlled testing dashboard for comparing what a website can legitimately observe when accessed from different browser profiles (same device, independent profiles).
 
 ## Status
 

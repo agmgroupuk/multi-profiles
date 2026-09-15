@@ -87,6 +87,35 @@ async function refreshSession() {
   return data;
 }
 
+// Refresh the server/browser panels from live sources without recording a history entry.
+async function refreshLiveInfo() {
+  try {
+    const server = await fetchJSON('/api/test');
+    setFields($('#server-kv'), server);
+    setFields($('#client-kv'), collectBrowserInfo());
+  } catch (err) {
+    // Non-fatal: leave the last known values on screen if a live refresh fails.
+  }
+}
+
+const LIVE_REFRESH_INTERVAL_MS = 3000;
+let liveRefreshTimer = null;
+
+function startLiveRefresh() {
+  stopLiveRefresh();
+  liveRefreshTimer = setInterval(() => {
+    refreshLiveInfo();
+    refreshSession();
+  }, LIVE_REFRESH_INTERVAL_MS);
+}
+
+function stopLiveRefresh() {
+  if (liveRefreshTimer) {
+    clearInterval(liveRefreshTimer);
+    liveRefreshTimer = null;
+  }
+}
+
 function renderHistoryRow(record) {
   const c = record.client || {};
   return `
@@ -229,6 +258,19 @@ async function init() {
   await refreshSession();
   await refreshHistory();
 
+  // Keep IP, language, online status, etc. accurate in real time, not just on demand.
+  window.addEventListener('online', refreshLiveInfo);
+  window.addEventListener('offline', refreshLiveInfo);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      stopLiveRefresh();
+    } else {
+      refreshLiveInfo();
+      refreshSession();
+      startLiveRefresh();
+    }
+  });
+
   $('#run-test-btn').addEventListener('click', runTest);
   $('#login-form').addEventListener('submit', handleLogin);
   $('#logout-btn').addEventListener('click', handleLogout);
@@ -249,6 +291,7 @@ async function init() {
 
   // Run an initial test automatically so the dashboard has data on first load.
   runTest();
+  startLiveRefresh();
 }
 
 init();
