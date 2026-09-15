@@ -24,7 +24,7 @@ multi-profiles/
 ## Features
 
 - **Session tracking** — each visitor gets a cookie-backed session (`express-session`, in-memory store). Dashboard shows session ID, creation time, last activity, and whether the cookie was present on this request.
-- **Server-side observed info** — timestamp, IP as seen by the server, `User-Agent`, `Accept-Language`, `Referer`.
+- **Server-side observed info** — timestamp, IPv4/IPv6 address as seen by the server (shown as separate fields — a given connection is only ever one or the other), `User-Agent`, `Accept-Language`, `Referer`.
 - **Browser-side observed info** — language, timezone, screen size, viewport size, device pixel ratio, platform, color depth, online status (collected via standard `navigator`/`screen`/`Intl` APIs).
 - **Dummy local test login** — username `test` / password `test123`, defined locally only. The password is never stored in plaintext (only a SHA-256 hash is kept in memory, compared with a timing-safe check). This is **not** a real Facebook/Google/etc. login.
 - **Test history** — every "Run new test" click records a test with server + browser data, kept in an in-memory array (capped at 200 entries).

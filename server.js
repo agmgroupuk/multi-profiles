@@ -68,17 +68,19 @@ app.use((req, res, next) => {
   next();
 });
 
-function getIpVersion(ip) {
-  if (!ip) return null;
+// A single connection is only ever IPv4 or IPv6, so exactly one of these is populated.
+function splitIp(ip) {
+  if (!ip) return { ipv4: null, ipv6: null };
   const normalized = ip.startsWith('::ffff:') ? ip.slice(7) : ip;
-  return normalized.includes(':') ? 'IPv6' : 'IPv4';
+  return normalized.includes(':') ? { ipv4: null, ipv6: normalized } : { ipv4: normalized, ipv6: null };
 }
 
 function getServerInfo(req) {
+  const { ipv4, ipv6 } = splitIp(req.ip);
   return {
     timestamp: new Date().toISOString(),
-    ip: req.ip,
-    ipVersion: getIpVersion(req.ip),
+    ipv4,
+    ipv6,
     userAgent: req.get('user-agent') || null,
     acceptLanguage: req.get('accept-language') || null,
     referer: req.get('referer') || null,
@@ -135,8 +137,8 @@ function flattenRecord(r) {
     testId: r.testId,
     sessionId: r.sessionId,
     timestamp: r.timestamp,
-    ip: r.server.ip,
-    ipVersion: r.server.ipVersion,
+    ipv4: r.server.ipv4,
+    ipv6: r.server.ipv6,
     userAgent: r.server.userAgent,
     acceptLanguage: r.server.acceptLanguage,
     referer: r.server.referer,

@@ -124,7 +124,8 @@ function renderHistoryRow(record) {
       <td class="mono">${record.testId.slice(0, 8)}</td>
       <td>${new Date(record.timestamp).toLocaleString()}</td>
       <td class="mono">${record.sessionId.slice(0, 8)}</td>
-      <td class="mono">${record.server.ip || '—'}</td>
+      <td class="mono">${record.server.ipv4 || '—'}</td>
+      <td class="mono">${record.server.ipv6 || '—'}</td>
       <td>${c.language || '—'}</td>
       <td>${c.timezone || '—'}</td>
       <td>${c.screen || '—'}</td>
@@ -136,7 +137,7 @@ async function refreshHistory() {
   const records = await fetchJSON('/api/history?limit=50');
   const tbody = $('#history-tbody');
   if (!records.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="hint">No tests yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="hint">No tests yet.</td></tr>';
   } else {
     tbody.innerHTML = records.map(renderHistoryRow).join('');
   }
@@ -222,7 +223,8 @@ async function handleCompare() {
       ['Test ID', (r) => r.testId.slice(0, 8)],
       ['Session ID', (r) => r.sessionId.slice(0, 8)],
       ['Timestamp', (r) => new Date(r.timestamp).toLocaleString()],
-      ['IP', (r) => r.server.ip || '—'],
+      ['IPv4', (r) => (r.server && r.server.ipv4) || '—'],
+      ['IPv6', (r) => (r.server && r.server.ipv6) || '—'],
       ['User-Agent', (r) => r.server.userAgent || '—'],
       ['Accept-Language', (r) => r.server.acceptLanguage || '—'],
       ['Browser language', (r) => (r.client && r.client.language) || '—'],
@@ -230,7 +232,6 @@ async function handleCompare() {
       ['Screen', (r) => (r.client && r.client.screen) || '—'],
       ['Viewport', (r) => (r.client && r.client.viewport) || '—'],
       ['Platform', (r) => (r.client && r.client.platform) || '—'],
-      ['IP version', (r) => (r.server && r.server.ipVersion) || '—'],
       ['CPU cores', (r) => (r.client && r.client.hardwareConcurrency) || '—'],
       ['Device memory (GB)', (r) => (r.client && r.client.deviceMemory) || '—'],
       ['Max touch points', (r) => (r.client && r.client.maxTouchPoints) ?? '—'],
