@@ -85,6 +85,9 @@ function getServerInfo(req) {
     acceptLanguage: req.get('accept-language') || null,
     referer: req.get('referer') || null,
     sessionId: req.sessionID,
+    // Diagnostic only: raw proxy chain, useful for tuning TRUST_PROXY hop count.
+    rawForwardedFor: req.headers['x-forwarded-for'] || null,
+    trustedIpChain: req.ips,
   };
 }
 
